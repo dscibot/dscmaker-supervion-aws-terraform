@@ -19,8 +19,8 @@ jobs:
 
     - name: Decode private key from Base64
       run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 -d > atouzet.pem
-        chmod 600 atouzet.pem
+        echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 -d > atouzet.pub
+        chmod 600 atouzet.pub
 
     - name: Terraform Init
       run: terraform init
@@ -40,4 +40,4 @@ jobs:
         TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
         TF_VAR_ami_id: ${{ secrets.TF_VAR_ami_id }}
         TF_VAR_key_name: ${{ secrets.TF_VAR_key_name }}
-        TF_VAR_private_key_path: atouzet.pem
+        TF_VAR_private_key_path: atouzet.pub
