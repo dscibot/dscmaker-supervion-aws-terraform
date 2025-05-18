@@ -35,13 +35,14 @@ jobs:
 
     # 🏗️ Terraform Apply directement (skip plan pour rapidité)
     - name: Terraform Apply
-      run: terraform apply -auto-approve \
-        -var="private_key_path=atouzet.pem" \
-        -var="public_key_file=atouzet.pub" \
-        -var="ami_id=${{ secrets.AMI_ID }}" \
-        -var="key_name=${{ secrets.KEY_NAME }}" \
-        -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
-        -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      run: |
+        terraform apply -auto-approve \
+            -var="private_key_path=atouzet.pem" \
+            -var="public_key_file=atouzet.pub" \
+            -var="ami_id=${{ secrets.AMI_ID }}" \
+            -var="key_name=${{ secrets.KEY_NAME }}" \
+            -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
