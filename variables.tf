@@ -21,6 +21,7 @@ variable "ami_id" {
 variable "key_name" {
   description = "Name of the SSH key pair"
   type        = string
+  default     = "atouzet"
 }
 
 variable "public_key_file" {
@@ -32,4 +33,5 @@ variable "public_key_file" {
 variable "private_key_path" {
   description = "Path to the SSH private key"
   type        = string
+  default     = "atouzet"
 }

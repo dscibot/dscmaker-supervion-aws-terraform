@@ -11,41 +11,28 @@ resource "aws_key_pair" "deployer" {
 
 resource "aws_security_group" "docker_sg" {
   name        = "allow_docker_ports"
-  description = "Allow access to Docker-exposed ports"
+  description = "Allow Docker ports"
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # SSH
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # HTTP
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Grafana
-  }
-
-  ingress {
-    from_port   = 9090
-    to_port     = 9090
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Prometheus
-  }
-
-  ingress {
-    from_port   = 3100
-    to_port     = 3100
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Loki
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -54,27 +41,28 @@ resource "aws_security_group" "docker_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-resource "aws_instance" "docker_server" {
-  ami                         = var.ami_id
-  instance_type               = "t2.micro"
-  key_name                    = aws_key_pair.deployer.key_name
-  vpc_security_group_ids      = [aws_security_group.docker_sg.id]
-  associate_public_ip_address = true
 
   tags = {
-    Name = "DockerMonitoringServer"
+    Name = "docker-security-group"
   }
+}
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+resource "aws_instance" "app_server" {
+  ami                    = var.ami_id
+  instance_type          = "t2.micro"
+  key_name               = aws_key_pair.deployer.key_name
+  vpc_security_group_ids = [aws_security_group.docker_sg.id]
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt-get update -y",
-      "sudo apt-get install -y docker.io docker-compose",
-      "sudo usermod -aG docker ubuntu",
-      "sudo systemctl enable docker",
+      "sudo apt update -y",
+      "sudo apt install docker.io -y",
       "sudo systemctl start docker",
-      # Copie et exécution du docker-compose (à adapter avec rsync ou autre)
+      "sudo systemctl enable docker"
     ]
 
     connection {
@@ -84,4 +72,12 @@ resource "aws_instance" "docker_server" {
       host        = self.public_ip
     }
   }
+
+  tags = {
+    Name = "docker-server"
+  }
+}
+
+output "instance_public_ip" {
+  value = aws_instance.app_server.public_ip
 }
