@@ -14,7 +14,7 @@ resource "aws_key_pair" "deployer" {
 }
 
 resource "aws_security_group" "docker_sg" {
-  name        = "allow_docker_ports"
+  name        = "allow_docker_ports-${replace(timestamp(), ":", "-")}"
   description = "Allow Docker ports"
   vpc_id      = data.aws_vpc.default.id
 
@@ -46,10 +46,15 @@ resource "aws_security_group" "docker_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
     Name = "docker-security-group"
   }
 }
+
 
 resource "aws_instance" "app_server" {
   ami                    = var.ami_id
