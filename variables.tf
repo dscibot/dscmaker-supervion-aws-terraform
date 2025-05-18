@@ -4,7 +4,7 @@ variable "aws_region" {
 }
 
 variable "ami_id" {
-  description = "AMI ID (Amazon Linux 2 recommandé)"
+  description = "AMI ID"
   type        = string
 }
 
