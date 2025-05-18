@@ -57,26 +57,33 @@ resource "aws_security_group" "docker_sg" {
 
 
 resource "aws_instance" "app_server" {
-  ami                    = var.ami_id
-  instance_type          = "t2.micro"
-  key_name               = aws_key_pair.deployer.key_name
+  ami           = var.ami_id
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.docker_sg.id]
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt update -y",
-      "sudo apt install docker.io -y",
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker"
-    ]
+  user_data = file("init.sh")
 
-    connection {
-      type        = "ssh"
-      user        = "ec2-user"
-      private_key = file(var.private_key_path)
-      host        = self.public_ip
-    }
+  tags = {
+    Name = "docker-server"
   }
+}
+
+provisioner "remote-exec" {
+  inline = [
+    "sudo apt update -y",
+    "sudo apt install docker.io -y",
+    "sudo systemctl start docker",
+    "sudo systemctl enable docker"
+  ]
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file(var.private_key_path)
+    host        = self.public_ip
+  }
+}
 
   tags = {
     Name = "docker-server"
