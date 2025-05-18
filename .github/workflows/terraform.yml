@@ -21,7 +21,6 @@ jobs:
       - name: Generate SSH key pair
         run: |
           ssh-keygen -t rsa -b 2048 -f atouzet -q -N ""
-          cat atouzet.pub
           ls -la
 
       - name: Terraform Init
@@ -35,7 +34,4 @@ jobs:
           terraform apply -auto-approve \
             -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
             -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
-            -var="ami_id=${{ secrets.TF_VAR_AMI_ID }}" \
-            -var="key_name=atouzet" \
-            -var="public_key_file=atouzet.pub" \
-            -var="private_key_path=atouzet"
+            -var="ami_id=${{ secrets.TF_VAR_AMI_ID }}"

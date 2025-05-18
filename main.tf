@@ -9,11 +9,12 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_key_pair" "deployer" {
-  key_name   = var.key_name
+  key_name   = "atouzet-${timestamp()}"
   public_key = file("${path.module}/${var.public_key_file}")
 }
 
 resource "aws_security_group" "docker_sg" {
+  name        = "allow_docker_ports"
   description = "Allow Docker ports"
   vpc_id      = data.aws_vpc.default.id
 
@@ -66,7 +67,7 @@ resource "aws_instance" "app_server" {
 
     connection {
       type        = "ssh"
-      user        = "ec2-user"
+      user        = "admin"
       private_key = file(var.private_key_path)
       host        = self.public_ip
     }
@@ -75,4 +76,8 @@ resource "aws_instance" "app_server" {
   tags = {
     Name = "docker-server"
   }
+}
+
+output "instance_public_ip" {
+  value = aws_instance.app_server.public_ip
 }
