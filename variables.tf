@@ -33,5 +33,5 @@ variable "public_key_file" {
 variable "private_key_path" {
   description = "Path to the SSH private key"
   type        = string
-  default     = "atouzet"
+  default     = "atouzet.pem" 
 }

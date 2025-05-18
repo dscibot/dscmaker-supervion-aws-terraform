@@ -4,13 +4,16 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
+data "aws_vpc" "default" {
+  default = true
+}
+
 resource "aws_key_pair" "deployer" {
   key_name   = var.key_name
   public_key = file("${path.module}/${var.public_key_file}")
 }
 
 resource "aws_security_group" "docker_sg" {
-  name        = "allow_docker_ports"
   description = "Allow Docker ports"
   vpc_id      = data.aws_vpc.default.id
 
@@ -47,10 +50,6 @@ resource "aws_security_group" "docker_sg" {
   }
 }
 
-data "aws_vpc" "default" {
-  default = true
-}
-
 resource "aws_instance" "app_server" {
   ami                    = var.ami_id
   instance_type          = "t2.micro"
@@ -67,7 +66,7 @@ resource "aws_instance" "app_server" {
 
     connection {
       type        = "ssh"
-      user        = "ubuntu"
+      user        = "admin"
       private_key = file(var.private_key_path)
       host        = self.public_ip
     }
@@ -77,4 +76,3 @@ resource "aws_instance" "app_server" {
     Name = "docker-server"
   }
 }
-
