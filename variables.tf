@@ -1,6 +1,16 @@
 variable "aws_region" {
-  description = "AWS region"
-  type        = string
+  type    = string
+  default = "eu-west-3"
+}
+
+variable "aws_access_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "aws_secret_key" {
+  type      = string
+  sensitive = true
 }
 
 variable "ami_id" {
@@ -8,17 +18,18 @@ variable "ami_id" {
   type        = string
 }
 
-variable "instance_type" {
-  default     = "t3.micro"
-  description = "Type d'instance EC2"
-}
-
 variable "key_name" {
-  description = "Nom de la key pair AWS"
+  description = "Name of the SSH key pair"
   type        = string
 }
 
+variable "public_key_file" {
+  description = "Path to the SSH public key"
+  type        = string
+  default     = "atouzet.pub"
+}
+
 variable "private_key_path" {
-  description = "Chemin vers la clé privée (.pem)"
+  description = "Path to the SSH private key"
   type        = string
 }

@@ -42,6 +42,18 @@ services:
       - docuseal_data:/data
     restart: unless-stopped
 
+  nginx:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./nginx/data:/data
+      - ./nginx/letsencrypt:/etc/letsencrypt
+
 volumes:
   grafana_data:
   docuseal_data:
