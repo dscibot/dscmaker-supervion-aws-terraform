@@ -5,6 +5,7 @@ echo "==== Script started ===="
 
 yum update -y
 echo "System updated."
+
 # Installe Docker et Docker Compose
 amazon-linux-extras install docker -y
 yum install docker -y
