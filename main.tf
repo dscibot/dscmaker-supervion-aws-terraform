@@ -62,7 +62,7 @@ resource "aws_instance" "app_server" {
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.docker_sg.id]
 
-  user_data = file("${path.module}/init.sh")
+  user_data = file("${path.module}/files/init.sh")
 
   tags = {
     Name = "docker-server"
