@@ -1,8 +1,10 @@
 #!/bin/bash
+exec > >(tee /var/log/init.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-# Met à jour le système
+echo "==== Script started ===="
+
 yum update -y
-
+echo "System updated."
 # Installe Docker et Docker Compose
 amazon-linux-extras install docker -y
 yum install docker -y
